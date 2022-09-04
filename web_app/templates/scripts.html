@@ -1,0 +1,154 @@
+{% load static %}
+<!-- JavaScript files-->
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'vendor/lightbox2/js/lightbox.min.js' %}"></script>
+<script src="{% static 'vendor/nouislider/nouislider.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap-select/js/bootstrap-select.min.js' %}"></script>
+<script src="{% static 'vendor/owl.carousel2/owl.carousel.min.js' %}"></script>
+<script src="{% static 'vendor/owl.carousel2.thumbs/owl.carousel2.thumbs.min.js' %}"></script>
+<script src="{% static 'js/front.js' %}"></script>
+<script>
+  // ------------------------------------------------------- //
+  //   Inject SVG Sprite - 
+  //   see more here 
+  //   https://css-tricks.com/ajaxing-svg-sprite/
+  // ------------------------------------------------------ //
+  function injectSvgSprite(path) {
+  
+      var ajax = new XMLHttpRequest();
+      ajax.open("GET", path, true);
+      ajax.send();
+      ajax.onload = function(e) {
+      var div = document.createElement("div");
+      div.className = 'd-none';
+      div.innerHTML = ajax.responseText;
+      document.body.insertBefore(div, document.body.childNodes[0]);
+      }
+  }
+  // this is set to BootstrapTemple website as you cannot 
+  // inject local SVG sprite (using only 'icons/orion-svg-sprite.svg' path)
+  // while using file:// protocol
+  // pls don't forget to change to your domain :)
+  injectSvgSprite('https://bootstraptemple.com/files/icons/orion-svg-sprite.svg'); 
+  
+</script>
+<script type="text/javascript">
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    function uuidv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+    let device = getCookie('device')
+
+    if (device == null || device == undefined){
+      device = uuidv4()
+    }
+    document.cookie ='device=' + device + ";domain=;path=/"
+
+  </script>
+
+<script>
+// AJAX CALL
+function increment(slug){
+  var web_url =  "{% url 'web_app:add-to-cart' 1234 %}".replace(/1234/, slug);
+  console.log(slug);
+  $.ajax({
+    type: "POST",
+    url: web_url,
+    data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+    success: function(data) {
+      if (data.success) {
+        updatePrices(slug, "add");
+      }
+      showCartMessages(data);
+      console.log("Showed message.");
+      updateCart(1);
+    }, 
+    error: function(error){
+      console.log(error);
+      console.log("error hello");
+    }
+
+    })
+}
+function decrement(slug){
+  var web_url =  "{% url 'web_app:remove-single-from-cart' 1234 %}".replace(/1234/, slug);
+  console.log(slug);
+  $.ajax({
+    type: "POST",
+    url: web_url,
+    data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+    success: function(data) {
+      updatePrices(slug, "remove");
+      showCartMessages(data);
+      console.log("Showed message.");
+      updateCart(-1);
+    }, 
+    error: function(error){
+      console.log(error);
+      console.log("error hello");
+    }
+
+    })
+}
+function updateCart(change) {
+  cart = document.getElementById("cart-quantity");
+  str_quantity = cart.innerHTML;
+  quantity = parseInt(str_quantity.slice(1,-1));
+  new_str_quantity = "(" + (quantity+change).toString() + ")";
+  cart.innerHTML = new_str_quantity;
+  console.log(new_str_quantity);
+}
+
+function showCartMessages(data){
+  var all_messages = $('#popup-messages-content');
+  all_messages.html("");
+  $.each(data.messages, function (i, m) {
+      msg = '<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><strong>'+ m.message +'</strong>';
+
+      all_messages.append(msg);
+  });
+}
+
+function updatePrices(slug, action) {
+  quantity_id = slug+"-quantity";
+  total_class_name = slug+"-total";
+  price_class_name = slug+"-price";
+
+  total_elements = document.getElementsByClassName(total_class_name);
+  total = document.getElementById("order-total");
+  price = document.getElementsByClassName(price_class_name)[0].innerHTML;
+  quantity = document.getElementById(quantity_id);
+
+  if (action == "remove") {
+    if (quantity.value == "1") {
+      document.location.reload(); 
+    }
+    price = parseFloat(price) * -1; 
+    quantity.value = parseInt(quantity.value) - 1;
+  } else {
+    quantity.value = parseInt(quantity.value) + 1;
+  }
+
+  total_elements[0].innerHTML = parseFloat(parseFloat(total_elements[0].innerHTML) + parseFloat(price)).toFixed(1);
+  total_elements[1].innerHTML = parseFloat(parseFloat(total_elements[1].innerHTML) + parseFloat(price)).toFixed(1);
+  total.innerHTML = parseFloat(parseFloat(total.innerHTML) + parseFloat(price)).toFixed(1);
+}
+</script>

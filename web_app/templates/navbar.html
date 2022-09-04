@@ -1,0 +1,59 @@
+<!-- navbar-->
+<header class="header bg-white">
+    <div class="px-lg-3 fixed-top" style="background-color: rgb(224, 221, 213);">
+      <nav class="navbar navbar-expand-lg navbar-light py-3 px-lg-0"><a class="navbar-brand" href="/"><span class="font-weight-bold text-uppercase text-dark">ECHI BASICS</span></a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <!-- Link--><a class="nav-link active" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <!-- Link--><a class="nav-link" href="/shop/">Shop</a>
+            </li>
+            <li class="nav-item">
+              <!-- Link<a class="nav-link" href="/checkout/">Checkout</a> -->
+            </li>
+            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" id="pagesDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pages</a>
+              <div class="dropdown-menu mt-3" aria-labelledby="pagesDropdown">
+                <a class="dropdown-item border-0" href="https://instagram.com/echi.basics">Instagram</a>
+                <a class="dropdown-item border-0" href="https://instagram.com/echi.basics">TikTok</a>
+              </div>
+            </li>
+          </ul>
+          <ul class="navbar-nav ml-auto">               
+            <li class="nav-item"><a class="nav-link" href="/cart/"> <i class="fas fa-dolly-flatbed mr-1 text-gray"></i>Cart<small class="text-gray" id="cart-quantity">{{ ct_quantity }}</small></a></li>
+            <li class="nav-item"><a class="nav-link" href="#"> <i class="far fa-heart mr-1"></i><small class="text-gray"> (0)</small></a></li>
+            <li class="nav-item"><a class="nav-link" href="#"> <i class="fas fa-user-alt mr-1 text-gray"></i>Login</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <script>
+    // ------------------------------------------------------- //
+    //   Inject SVG Sprite - 
+    //   see more here 
+    //   https://css-tricks.com/ajaxing-svg-sprite/
+    // ------------------------------------------------------ //
+    function injectSvgSprite(path) {
+    
+        var ajax = new XMLHttpRequest();
+        ajax.open("GET", path, true);
+        ajax.send();
+        ajax.onload = function(e) {
+        var div = document.createElement("div");
+        div.className = 'd-none';
+        div.innerHTML = ajax.responseText;
+        document.body.insertBefore(div, document.body.childNodes[0]);
+        }
+    }
+    // this is set to BootstrapTemple website as you cannot 
+    // inject local SVG sprite (using only 'icons/orion-svg-sprite.svg' path)
+    // while using file:// protocol
+    // pls don't forget to change to your domain :)
+    injectSvgSprite('https://bootstraptemple.com/files/icons/orion-svg-sprite.svg'); 
+    
+  </script>
+  <!-- FontAwesome CSS - loading as last, so it doesn't block rendering-->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
